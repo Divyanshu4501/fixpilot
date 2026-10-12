@@ -4,3 +4,5 @@ __pycache__/
 .env
 logs/
 /gold.*.json
+test.ipynb
+.ipynb_checkpoints/
