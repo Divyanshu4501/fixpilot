@@ -613,12 +613,14 @@ version = "0.1.0"
 source = { virtual = "." }
 dependencies = [
     { name = "datasets" },
+    { name = "docker" },
     { name = "swebench" },
 ]
 
 [package.metadata]
 requires-dist = [
     { name = "datasets", specifier = ">=5.1.0" },
+    { name = "docker", specifier = ">=7.2.0" },
     { name = "swebench", specifier = ">=5.0.2" },
 ]
 
