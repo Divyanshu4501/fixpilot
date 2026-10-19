@@ -24,6 +24,16 @@ SWEBENCH_ENV_SETUP = "source /opt/miniconda3/bin/activate && conda activate test
 
 TIMEOUT_EXIT_CODE = 124  # what the `timeout` tool returns when it had to kill a command
 
+# Stop tools from waiting for a keypress (pagers) or flooding the output with progress bars.
+NON_INTERACTIVE_ENV = {
+    "PAGER": "cat",
+    "GIT_PAGER": "cat",
+    "MANPAGER": "cat",
+    "LESS": "-R",
+    "PIP_PROGRESS_BAR": "off",
+    "TQDM_DISABLE": "1",
+}
+
 
 @dataclass
 class CommandResult:
@@ -98,6 +108,7 @@ class Sandbox:
         exit_code, raw = self.container.exec_run(
             ["timeout", "-k", "5", str(timeout), "bash", "-c", script],
             workdir=self.workdir,
+            environment=NON_INTERACTIVE_ENV,
         )
         return CommandResult(
             output=raw.decode("utf-8", errors="replace") if raw else "",
@@ -134,6 +145,7 @@ if __name__ == "__main__":
         _show("1. where am I, which python", sb.run("pwd && python --version"))
         _show("2. a failing command", sb.run("ls /does-not-exist"))
         _show("3. internet blocked?", sb.run("getent hosts github.com || echo 'no network (expected)'"))
+        _show("3b. pager disabled?", sb.run("echo PAGER=$PAGER GIT_PAGER=$GIT_PAGER && git log -1 --oneline"))
 
         r = sb.run("sleep 10", timeout=3)
         _show("4. timeout test (sleep 10, limit 3s)", r)
