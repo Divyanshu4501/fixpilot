@@ -1,0 +1,14 @@
+{
+  "dataset": "SWE-bench/SWE-bench_Lite",
+  "git_commit": "69157c95774a60e40969da47daf44a17a5a34540",
+  "finished_at": "2026-10-19T09:45:33.524134+00:00",
+  "config": {
+    "model": "gpt-6-luna",
+    "reasoning_effort": "medium",
+    "max_steps": 30,
+    "max_cost_usd": 0.5,
+    "command_timeout": 180,
+    "max_output_chars": 10000,
+    "verbose": true
+  }
+}
