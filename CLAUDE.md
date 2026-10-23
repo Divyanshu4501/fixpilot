@@ -35,7 +35,8 @@ It is a portfolio project for Applied GenAI / LLM-engineer internship applicatio
 ## Current state (2026-10-23)
 
 - **Done:** M0 setup, M1 sandbox, M2 scorer verified (gold patch for `django__django-11099` → resolved in 21 s), M3 minimal agent end to end (11099 resolved, 6 steps, $0.0009).
-- **In progress:** M4 (harness core + baseline on SWE-bench Verified).
+- **Done:** M4 harness core: `tasks.py`, `images.py`, `score.py`, `run.py`, `analyze.py`, 52 unit tests. Dev/test IDs fixed in `data/`. **Baseline on dev: 14/20 = 70% (Wilson 48–85%), $0.0036/task, median 11.5 steps** (`results/ablation.md`).
+- The 20 dev images are **kept on disk** (`--keep-images`) for M5 ablations (~37 GB). Remove them individually when M5 is done.
 - `fixpilot/sandbox.py` — **working and tested.** Starts a container (`sleep infinity`, `network_mode="none"`), runs commands with `timeout -k 5 <t> bash -c` (exit 124 = timeout), activates the `testbed` conda env per command, records `git rev-parse HEAD` as base commit, returns `git -c core.fileMode=false diff <base_commit>`, cleans up via context manager.
 - `fixpilot/agent.py` — v0 loop on the **Responses API** (reasoning on, `store=False`, full-history replay). Self-test: `uv run python -m fixpilot.agent` (runs `django__django-11099`).
 - `scratch/` — Divyanshu's own practice versions of files. Gitignored. **Do not edit or import from it.**
