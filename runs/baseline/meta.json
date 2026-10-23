@@ -1,0 +1,48 @@
+{
+  "run_name": "baseline",
+  "settings": {
+    "dataset": "SWE-bench/SWE-bench_Verified",
+    "ids_file": "data/dev_ids.txt",
+    "agent": {
+      "model": "gpt-6-luna",
+      "reasoning_effort": "medium",
+      "max_steps": 30,
+      "max_cost_usd": 0.5,
+      "command_timeout": 180,
+      "max_output_chars": 10000
+    }
+  },
+  "ids": [
+    "astropy__astropy-14598",
+    "django__django-11206",
+    "django__django-12276",
+    "django__django-12304",
+    "django__django-13363",
+    "django__django-13401",
+    "django__django-14500",
+    "django__django-15572",
+    "django__django-16255",
+    "django__django-16595",
+    "matplotlib__matplotlib-20488",
+    "pydata__xarray-7229",
+    "pylint-dev__pylint-4661",
+    "pytest-dev__pytest-7571",
+    "scikit-learn__scikit-learn-10908",
+    "sphinx-doc__sphinx-9591",
+    "sphinx-doc__sphinx-9658",
+    "sympy__sympy-13974",
+    "sympy__sympy-15976",
+    "sympy__sympy-24661"
+  ],
+  "git_commit": "9cb99f436c89033020ff5f1697ac5fc0e120c920",
+  "git_dirty": false,
+  "started_at": "2026-10-23T17:34:26.815334+00:00",
+  "versions": {
+    "openai": "3.29.0",
+    "swebench": "5.0.2",
+    "docker": "7.2.0"
+  },
+  "finished_at": "2026-10-23T18:02:18.088065+00:00",
+  "n_trajectories": 20,
+  "total_cost_usd": 0.071265
+}

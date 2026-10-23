@@ -1,0 +1,64 @@
+{
+    "total_instances": 5,
+    "submitted_instances": 15,
+    "completed_instances": 5,
+    "resolved_instances": 3,
+    "unresolved_instances": 2,
+    "infra_failure_instances": 0,
+    "ambiguous_failure_instances": 1,
+    "empty_patch_instances": 0,
+    "error_instances": 0,
+    "completed_ids": [
+        "matplotlib__matplotlib-20488",
+        "pydata__xarray-7229",
+        "pylint-dev__pylint-4661",
+        "pytest-dev__pytest-7571",
+        "scikit-learn__scikit-learn-10908"
+    ],
+    "incomplete_ids": [],
+    "empty_patch_ids": [],
+    "submitted_ids": [
+        "astropy__astropy-14598",
+        "django__django-11206",
+        "django__django-12276",
+        "django__django-12304",
+        "django__django-13363",
+        "django__django-13401",
+        "django__django-14500",
+        "django__django-15572",
+        "django__django-16255",
+        "django__django-16595",
+        "matplotlib__matplotlib-20488",
+        "pydata__xarray-7229",
+        "pylint-dev__pylint-4661",
+        "pytest-dev__pytest-7571",
+        "scikit-learn__scikit-learn-10908"
+    ],
+    "resolved_ids": [
+        "matplotlib__matplotlib-20488",
+        "pytest-dev__pytest-7571",
+        "scikit-learn__scikit-learn-10908"
+    ],
+    "unresolved_ids": [
+        "pydata__xarray-7229",
+        "pylint-dev__pylint-4661"
+    ],
+    "infra_failure_ids": [],
+    "ambiguous_failure_ids": [
+        "pylint-dev__pylint-4661"
+    ],
+    "failure_reasons": {
+        "pylint-dev__pylint-4661": "missing_module"
+    },
+    "error_ids": [],
+    "schema_version": 2,
+    "unstopped_instances": 0,
+    "unstopped_containers": [],
+    "unremoved_images": [
+        "swebench/sweb.eval.x86_64.matplotlib_1776_matplotlib-20488:latest",
+        "swebench/sweb.eval.x86_64.pydata_1776_xarray-7229:latest",
+        "swebench/sweb.eval.x86_64.pylint-dev_1776_pylint-4661:latest",
+        "swebench/sweb.eval.x86_64.pytest-dev_1776_pytest-7571:latest",
+        "swebench/sweb.eval.x86_64.scikit-learn_1776_scikit-learn-10908:latest"
+    ]
+}

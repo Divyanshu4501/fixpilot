@@ -1,0 +1,65 @@
+{
+    "total_instances": 5,
+    "submitted_instances": 20,
+    "completed_instances": 5,
+    "resolved_instances": 2,
+    "unresolved_instances": 3,
+    "infra_failure_instances": 0,
+    "ambiguous_failure_instances": 0,
+    "empty_patch_instances": 0,
+    "error_instances": 0,
+    "completed_ids": [
+        "sphinx-doc__sphinx-9591",
+        "sphinx-doc__sphinx-9658",
+        "sympy__sympy-13974",
+        "sympy__sympy-15976",
+        "sympy__sympy-24661"
+    ],
+    "incomplete_ids": [],
+    "empty_patch_ids": [],
+    "submitted_ids": [
+        "astropy__astropy-14598",
+        "django__django-11206",
+        "django__django-12276",
+        "django__django-12304",
+        "django__django-13363",
+        "django__django-13401",
+        "django__django-14500",
+        "django__django-15572",
+        "django__django-16255",
+        "django__django-16595",
+        "matplotlib__matplotlib-20488",
+        "pydata__xarray-7229",
+        "pylint-dev__pylint-4661",
+        "pytest-dev__pytest-7571",
+        "scikit-learn__scikit-learn-10908",
+        "sphinx-doc__sphinx-9591",
+        "sphinx-doc__sphinx-9658",
+        "sympy__sympy-13974",
+        "sympy__sympy-15976",
+        "sympy__sympy-24661"
+    ],
+    "resolved_ids": [
+        "sphinx-doc__sphinx-9591",
+        "sympy__sympy-24661"
+    ],
+    "unresolved_ids": [
+        "sphinx-doc__sphinx-9658",
+        "sympy__sympy-13974",
+        "sympy__sympy-15976"
+    ],
+    "infra_failure_ids": [],
+    "ambiguous_failure_ids": [],
+    "failure_reasons": {},
+    "error_ids": [],
+    "schema_version": 2,
+    "unstopped_instances": 0,
+    "unstopped_containers": [],
+    "unremoved_images": [
+        "swebench/sweb.eval.x86_64.sphinx-doc_1776_sphinx-9591:latest",
+        "swebench/sweb.eval.x86_64.sphinx-doc_1776_sphinx-9658:latest",
+        "swebench/sweb.eval.x86_64.sympy_1776_sympy-13974:latest",
+        "swebench/sweb.eval.x86_64.sympy_1776_sympy-15976:latest",
+        "swebench/sweb.eval.x86_64.sympy_1776_sympy-24661:latest"
+    ]
+}
