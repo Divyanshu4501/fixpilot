@@ -1,0 +1,70 @@
+{
+  "dataset": "SWE-bench/SWE-bench_Verified",
+  "split": "test",
+  "seed": 20261023,
+  "excluded": [
+    "django__django-11099"
+  ],
+  "dev": {
+    "n": 20,
+    "repos": {
+      "django/django": 9,
+      "sympy/sympy": 3,
+      "sphinx-doc/sphinx": 2,
+      "astropy/astropy": 1,
+      "matplotlib/matplotlib": 1,
+      "pydata/xarray": 1,
+      "pylint-dev/pylint": 1,
+      "pytest-dev/pytest": 1,
+      "scikit-learn/scikit-learn": 1
+    },
+    "difficulty": {
+      "15 min - 1 hour": 13,
+      "<15 min fix": 7
+    }
+  },
+  "test": {
+    "n": 50,
+    "repos": {
+      "django/django": 23,
+      "sympy/sympy": 8,
+      "sphinx-doc/sphinx": 5,
+      "matplotlib/matplotlib": 3,
+      "scikit-learn/scikit-learn": 3,
+      "astropy/astropy": 2,
+      "pydata/xarray": 2,
+      "pytest-dev/pytest": 2,
+      "psf/requests": 1,
+      "pylint-dev/pylint": 1
+    },
+    "difficulty": {
+      "15 min - 1 hour": 26,
+      "<15 min fix": 19,
+      "1-4 hours": 4,
+      ">4 hours": 1
+    }
+  },
+  "pool": {
+    "n": 500,
+    "repos": {
+      "django/django": 231,
+      "sympy/sympy": 75,
+      "sphinx-doc/sphinx": 44,
+      "matplotlib/matplotlib": 34,
+      "scikit-learn/scikit-learn": 32,
+      "astropy/astropy": 22,
+      "pydata/xarray": 22,
+      "pytest-dev/pytest": 19,
+      "pylint-dev/pylint": 10,
+      "psf/requests": 8,
+      "mwaskom/seaborn": 2,
+      "pallets/flask": 1
+    },
+    "difficulty": {
+      "15 min - 1 hour": 261,
+      "<15 min fix": 194,
+      "1-4 hours": 42,
+      ">4 hours": 3
+    }
+  }
+}
