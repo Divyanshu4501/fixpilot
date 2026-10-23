@@ -32,14 +32,15 @@ It is a portfolio project for Applied GenAI / LLM-engineer internship applicatio
 - Docker works without sudo. SWE-bench images are pulled from Docker Hub (`swebench/sweb.eval.x86_64.<id with __ → _1776_>:latest`), 1–4 GB each.
 - `.env` (gitignored, chmod 600): `OPENAI_API_KEY`, `FIXPILOT_MODEL=gpt-6-luna`. **Never print, cat, log or commit secrets. Never pass them into a container.**
 
-## Current state (2026-10-19)
+## Current state (2026-10-23)
 
-- **Done:** M0 setup, M1 sandbox, M2 scorer verified (gold patch for `django__django-11099` → resolved in 21 s).
+- **Done:** M0 setup, M1 sandbox, M2 scorer verified (gold patch for `django__django-11099` → resolved in 21 s), M3 minimal agent end to end (11099 resolved, 6 steps, $0.0009).
+- **In progress:** M4 (harness core + baseline on SWE-bench Verified).
 - `fixpilot/sandbox.py` — **working and tested.** Starts a container (`sleep infinity`, `network_mode="none"`), runs commands with `timeout -k 5 <t> bash -c` (exit 124 = timeout), activates the `testbed` conda env per command, records `git rev-parse HEAD` as base commit, returns `git -c core.fileMode=false diff <base_commit>`, cleans up via context manager.
-- `fixpilot/agent.py` — v0 loop written for **Chat Completions; must be migrated to the Responses API** (see gotchas). Self-test: `uv run python -m fixpilot.agent` (runs `django__django-11099`).
+- `fixpilot/agent.py` — v0 loop on the **Responses API** (reasoning on, `store=False`, full-history replay). Self-test: `uv run python -m fixpilot.agent` (runs `django__django-11099`).
 - `scratch/` — Divyanshu's own practice versions of files. Gitignored. **Do not edit or import from it.**
 - Gitignored: `.venv/`, `.env`, `__pycache__/`, `logs/`, `/gold.*.json`, `test.ipynb`, `.ipynb_checkpoints/`, `scratch/`.
-- Uncommitted changes may exist (`pyproject.toml`, `uv.lock` after `uv add openai python-dotenv`; `fixpilot/agent.py`). Check `git status` first and commit in small pieces.
+- Check `git status` first and commit in small pieces.
 
 ## Non-negotiable rules
 
@@ -55,9 +56,11 @@ It is a portfolio project for Applied GenAI / LLM-engineer internship applicatio
 
 ## Known gotchas (already hit — don't rediscover)
 
-- **swebench 5.0.2 needs the dataset `SWE-bench/SWE-bench_Lite`** (it has an `image` field). `princeton-nlp/SWE-bench_Lite` fails with `KeyError: 'image'`. The `--namespace` flag no longer exists. In this dataset `FAIL_TO_PASS`/`PASS_TO_PASS` are real lists.
+- **swebench 5.0.2 needs the `SWE-bench/...` datasets** (`SWE-bench/SWE-bench_Lite`, `SWE-bench/SWE-bench_Verified`; they have an `image` field). `princeton-nlp/SWE-bench_Lite` fails with `KeyError: 'image'`. The `--namespace` flag no longer exists. In this dataset `FAIL_TO_PASS`/`PASS_TO_PASS` are real lists.
 - **The harness caches results by `run_id`.** Every new attempt needs a new `run_id`.
 - **Container `HEAD` ≠ dataset `base_commit`** (the image adds its own commit). Expected. Always diff against the HEAD recorded at container start.
+- With `store=False`, reasoning items include `encrypted_content` **by default**; `include=["reasoning.encrypted_content"]` is a legacy no-op (verified 2026-10-23). Don't add it back.
+- `load_dotenv()` with no path searches from the *calling file's* directory, not the cwd. Scripts outside the repo need an explicit path.
 - **`gpt-6-luna` on Chat Completions rejects function tools unless `reasoning_effort="none"`.** Decision: **use the Responses API with reasoning on.** `gpt-6.1-sol` requires the Responses API for tool calling and does not support `none`/`minimal` effort.
 - Each sandbox command is a **fresh shell**: `cd` and env vars don't persist (the system prompt tells the model this).
 - `git diff` excludes **untracked files** (on purpose: scratch repro scripts stay out of the patch).
@@ -128,10 +131,13 @@ docs/notes/, docs/DECISIONS.md
 - No function call, or `response.status == "incomplete"` → append a nudge user message; counts as a step.
 - Usage: `usage.input_tokens`, `usage.input_tokens_details.cached_tokens`, `usage.output_tokens`, `usage.output_tokens_details.reasoning_tokens`. Log reasoning tokens per step.
 
+## Decided (2026-10-23)
+
+- **Dataset: SWE-bench Verified** (`SWE-bench/SWE-bench_Verified`, test split, 500 rows; every row has an `image` field matching the Docker Hub naming rule). Used for **both** the 20-task dev set and the 50-task test set: fixed seed, proportional mix of repos, no overlap, IDs saved in `data/`. The dataset name is a setting (default Verified), so Lite still works (the M3 self-test used Lite). Verified rows also have a `difficulty` field: selection may use it, the agent must never see it.
+- **Baseline reasoning effort: `medium`.** `low` and `high` are M5 ablation candidates.
+
 ## Open decisions — ask Divyanshu, don't decide
 
-- **SWE-bench Lite vs Verified** for the final score (Verified is human-checked and used by the official bash-only leaderboard). Make the dataset name a setting so both work.
-- Reasoning effort for the baseline (`medium` vs `low`).
 - Number of parallel workers (start at 4; limited by RAM, disk and API rate limits).
 - Order of M5 upgrades, and which becomes the "non-obvious decision".
 - GitHub-mode target repo (cudagrad Python-side issues with CPU-only tests, or a small purpose-built repo).
@@ -153,7 +159,7 @@ docs/notes/, docs/DECISIONS.md
 - *Done when:* the 20-task dev set runs unattended and the baseline row exists in `results/ablation.md`.
 
 **M5 — Upgrades, one at a time** (each a config flag, each a new ablation row on the same dev set)
-Candidates: file viewer (line-numbered windows), edit tool with Python syntax check that rejects broken edits, code search / repo map, reproduce-first rule, test feedback before submit, submit checks (non-empty, no test-file edits, applies cleanly), reviewer agent (second model reviews issue + diff + test output), best-of-N with self-selection. Also: same best config with `gpt-6.1-sol` on dev to compare harness gains vs model gains.
+Candidates: reasoning effort `low` and `high` (vs baseline `medium`), file viewer (line-numbered windows), edit tool with Python syntax check that rejects broken edits, code search / repo map, reproduce-first rule, test feedback before submit, submit checks (non-empty, no test-file edits, applies cleanly), reviewer agent (second model reviews issue + diff + test output), best-of-N with self-selection. Also: same best config with `gpt-6.1-sol` on dev to compare harness gains vs model gains.
 - *Done when:* 2–4 upgrades are measured and the ablation table is filled.
 
 **M6 — Final evaluation**: best config on the 50-task test set, once. Headline numbers with CI, failure breakdown, written up in `results/final.md`.
@@ -171,7 +177,7 @@ uv run pytest                                     # unit tests
 
 # score predictions with the official harness (new run_id every time)
 uv run python -m swebench.harness.run_evaluation \
-  --dataset_name SWE-bench/SWE-bench_Lite \
+  --dataset_name SWE-bench/SWE-bench_Verified \
   --predictions_path runs/<run_name>/predictions.jsonl \
   --max_workers 4 \
   --run_id <unique_run_id> \
