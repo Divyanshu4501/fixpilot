@@ -173,7 +173,12 @@ Candidates: reasoning effort `low` and `high` (vs baseline `medium`), file viewe
 ```bash
 uv run python -m fixpilot.sandbox                 # sandbox self-test
 uv run python -m fixpilot.agent                   # agent self-test on django__django-11099
-uv run pytest                                     # unit tests
+uv run pytest                                     # unit tests (no Docker / API)
+uv run pytest -m integration                      # Docker tests (needs the 11099 image)
+
+uv run python -m fixpilot.images data/dev_ids.txt # estimate image download, no pull
+uv run python -m fixpilot.run --run-name <name> --ids-file data/dev_ids.txt   # run + score, resumable
+uv run python -m fixpilot.analyze --run-name <name> --ablation "<label>"      # metrics + ablation row
 
 # score predictions with the official harness (new run_id every time)
 uv run python -m swebench.harness.run_evaluation \
