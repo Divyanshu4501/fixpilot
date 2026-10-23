@@ -1,0 +1,30 @@
+{
+  "run_name": "smoke-2",
+  "settings": {
+    "dataset": "SWE-bench/SWE-bench_Verified",
+    "ids_file": "data/dev_ids.txt",
+    "agent": {
+      "model": "gpt-6-luna",
+      "reasoning_effort": "medium",
+      "max_steps": 30,
+      "max_cost_usd": 0.5,
+      "command_timeout": 180,
+      "max_output_chars": 10000
+    }
+  },
+  "ids": [
+    "astropy__astropy-14598",
+    "django__django-11206"
+  ],
+  "git_commit": "1307589a9f178b91fcdaa48e868eeaac232b4f01",
+  "git_dirty": false,
+  "started_at": "2026-10-23T14:20:55.735319+00:00",
+  "versions": {
+    "openai": "3.29.0",
+    "swebench": "5.0.2",
+    "docker": "7.2.0"
+  },
+  "finished_at": "2026-10-23T16:00:16.261490+00:00",
+  "n_trajectories": 2,
+  "total_cost_usd": 0.011083
+}

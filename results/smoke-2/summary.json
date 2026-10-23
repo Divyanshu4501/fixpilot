@@ -1,0 +1,62 @@
+{
+  "summary": {
+    "n_tasks": 2,
+    "resolved": 1,
+    "resolve_rate": 0.5,
+    "ci95_wilson": [
+      0.09453120573423068,
+      0.9054687942657693
+    ],
+    "total_cost_usd": 0.0111,
+    "cost_per_task_usd": 0.0055,
+    "cost_per_resolved_usd": 0.0111,
+    "median_steps": 15.0,
+    "median_duration_s": 128.55,
+    "empty_patch_rate": 0.0,
+    "patch_applied_rate": 1.0,
+    "infra_failures": 0,
+    "not_run": 0,
+    "not_scored": 0,
+    "touches_tests": 0,
+    "categories": {
+      "resolved": 1,
+      "infra_error": 0,
+      "not_run": 0,
+      "not_scored": 0,
+      "empty_patch": 0,
+      "apply_failed": 0,
+      "broke_tests": 0,
+      "wrong_fix": 1
+    },
+    "exit_reasons": {
+      "submitted": 2
+    },
+    "total_reasoning_tokens": 7080
+  },
+  "tasks": [
+    {
+      "instance_id": "astropy__astropy-14598",
+      "category": "wrong_fix",
+      "exit_reason": "submitted",
+      "steps": 19,
+      "cost_usd": 0.007095,
+      "duration_s": 164.2,
+      "tokens_reasoning": 4129,
+      "patch_lines": 17,
+      "touches_tests": false,
+      "error": null
+    },
+    {
+      "instance_id": "django__django-11206",
+      "category": "resolved",
+      "exit_reason": "submitted",
+      "steps": 11,
+      "cost_usd": 0.003988,
+      "duration_s": 92.9,
+      "tokens_reasoning": 2951,
+      "patch_lines": 21,
+      "touches_tests": false,
+      "error": null
+    }
+  ]
+}
