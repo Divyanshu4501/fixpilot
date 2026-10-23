@@ -221,8 +221,7 @@ def run_agent(task: dict, sandbox: Sandbox, config: AgentConfig, client: OpenAI 
                 tools=TOOLS,
                 parallel_tool_calls=False,            # at most one tool call per turn
                 store=False,                          # nothing kept server-side; we replay history
-                reasoning={"effort": config.reasoning_effort},
-                include=["reasoning.encrypted_content"],  # needed to pass reasoning back with store=False
+                reasoning={"effort": config.reasoning_effort},  # store=False returns it encrypted by default
             )
             usage = step_cost(config.model, response.usage)
             for name in ("cost_usd", "tokens_in", "tokens_cached", "tokens_out", "tokens_reasoning"):
