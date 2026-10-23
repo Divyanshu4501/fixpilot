@@ -217,18 +217,22 @@ def main() -> None:
 
         if free_gb() < args.min_free_gb:
             raise SystemExit(f"Only {free_gb():.0f} GB free (< {args.min_free_gb}). Stopping before pulling.")
-        pulled = []
-        for iid in batch:
-            if ensure_image(docker_client, tasks[iid]["image"]):
-                pulled.append(tasks[iid]["image"])
-        print(f"  pulled {len(pulled)} image(s), {free_gb():.0f} GB free", flush=True)
+        pulled, unavailable = [], set()
+        try:  # pulls are inside the try, so a crash still removes what this batch pulled
+            for iid in batch:
+                try:
+                    if ensure_image(docker_client, tasks[iid]["image"]):
+                        pulled.append(tasks[iid]["image"])
+                except Exception as e:  # no image -> skip the task now; a resume retries it
+                    unavailable.add(iid)
+                    print(f"  skip  {iid}: image unavailable ({type(e).__name__}: {e})", flush=True)
+            print(f"  pulled {len(pulled)} image(s), {free_gb():.0f} GB free", flush=True)
 
-        try:
-            run_batch([tasks[i] for i in to_run], config, client, traj_dir, args.workers,
-                      spent, args.max_total_cost)
+            run_batch([tasks[i] for i in to_run if i not in unavailable], config, client, traj_dir,
+                      args.workers, spent, args.max_total_cost)
             trajectories = load_trajectories(traj_dir)
             predictions = write_predictions(run_dir, trajectories, model_name)
-            ready = [i for i in to_score if i in trajectories]
+            ready = [i for i in to_score if i in trajectories and i not in unavailable]
             if ready and not args.no_score:
                 run_id = f"{args.run_name}.b{b}.{datetime.now().strftime('%Y%m%d-%H%M%S')}"
                 for r in score_ids(predictions, ready, args.dataset, run_id, report_dir, args.workers):
