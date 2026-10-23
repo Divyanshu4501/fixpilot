@@ -13,11 +13,12 @@ Decisions made before M3 are summarised in the table in `CLAUDE.md`.
 - **Reason:** `gpt-6-luna` rejects function tools on Chat Completions unless reasoning is off, and `gpt-6.1-sol` needs the Responses API for tool calls. Turning reasoning off would also hide a knob we want to ablate.
 - **Evidence:** the first self-test (2026-10-13) failed at step 1 with `400: Function tools with reasoning_effort are not supported for gpt-6-luna in /v1/chat/completions`.
 
-### D2. `store=False` + `include=["reasoning.encrypted_content"]`
-- **Decision:** nothing is stored server-side. Each call asks for the reasoning in encrypted form, and we send it back in the history.
+### D2. `store=False`; replay the encrypted reasoning items (no `include` flag)
+- **Decision:** nothing is stored server-side. Reasoning items come back with an `encrypted_content` field, and we send them back unchanged in the history.
 - **Alternatives:** (a) `store=True` + `previous_response_id`: less data sent per call, but the trajectory would live on OpenAI's servers, and we would not own the full history; (b) drop the reasoning items: the model would lose its train of thought between tool calls.
-- **Reason:** with `store=False` the API cannot look reasoning items up by ID. The only way to pass them back is as encrypted content, and the API returns that only when asked through `include`.
-- **Evidence:** self-test ran 6 steps with reasoning items replayed and no API errors.
+- **Reason:** with `store=False` the API cannot look reasoning items up by ID, so they must be passed back as encrypted content.
+- **Correction (2026-10-23):** M3 also sent `include=["reasoning.encrypted_content"]`, and this entry claimed it was required. That was wrong. OpenAI's reasoning guide says that in stateless mode (`store=false` or ZDR) reasoning items include `encrypted_content` by default: "The API still accepts the legacy `reasoning.encrypted_content` value in `include` for compatibility, but doesn't require it." The flag was removed from `agent.py`. The M3 result is unaffected, because the flag changed nothing.
+- **Evidence:** self-test ran 6 steps with reasoning items replayed and no API errors. A probe on `gpt-6-luna` with `store=False` returned a reasoning item with `encrypted_content` both with and without `include`.
 
 ### D3. Replay output items with `model_dump(exclude_none=True)`
 - **Decision:** `history.extend(item.model_dump(exclude_none=True) for item in response.output)`.
