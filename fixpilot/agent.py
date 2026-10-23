@@ -18,6 +18,7 @@ from dataclasses import asdict, dataclass, field
 from openai import OpenAI
 
 from fixpilot.sandbox import CommandResult, Sandbox
+from fixpilot.tasks import assert_visible_only, visible_task
 
 # USD per 1M tokens: (uncached input, cached input, output). Checked Oct 2026.
 # Uncached input is priced at the cache-WRITE rate to be conservative.
@@ -196,6 +197,7 @@ def _print_step(r: dict) -> None:
 
 def run_agent(task: dict, sandbox: Sandbox, config: AgentConfig, client: OpenAI | None = None) -> AgentResult:
     """Run the agent on one task inside an already-started sandbox."""
+    assert_visible_only(task)  # leakage guard: the task may carry visible fields only
     client = client or OpenAI(max_retries=5, timeout=300)
     history: list = [{"role": "user", "content": USER_TEMPLATE.format(issue=task["problem_statement"])}]
     trajectory = []
@@ -278,9 +280,6 @@ def run_agent(task: dict, sandbox: Sandbox, config: AgentConfig, client: OpenAI 
 
 # ---------- self-test: `uv run python -m fixpilot.agent` ----------
 
-VISIBLE_FIELDS = ("instance_id", "repo", "base_commit", "problem_statement", "image")
-
-
 def _git_commit() -> str:
     import subprocess
     out = subprocess.run(["git", "rev-parse", "HEAD"], capture_output=True, text=True)
@@ -300,7 +299,7 @@ if __name__ == "__main__":
     DATASET = "SWE-bench/SWE-bench_Lite"
     ds = load_dataset(DATASET, split="test")
     row = next(r for r in ds if r["instance_id"] == INSTANCE)
-    task = {k: row[k] for k in VISIBLE_FIELDS}  # visible fields ONLY: no patch, tests or hints
+    task = visible_task(row)  # visible fields ONLY: no patch, tests or hints
 
     config = AgentConfig(model=os.environ.get("FIXPILOT_MODEL", "gpt-6-luna"))
     print(f"Running {config.model} (effort {config.reasoning_effort}) on {INSTANCE} "
