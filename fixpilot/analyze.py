@@ -102,6 +102,7 @@ def task_rows(ids: list[str], trajectories: dict, statuses: dict) -> list[dict]:
             "patch_lines": len(t["patch"].splitlines()) if t else 0,
             "touches_tests": touches_tests(t["patch"]) if t else False,
             "error": (t or {}).get("error"),
+            "harness_note": (s or {}).get("infra_reason"),  # the harness's log classifier, if it flagged anything
         })
     return rows
 
@@ -169,9 +170,10 @@ def summary_markdown(run_name: str, meta: dict, s: dict, rows: list[dict]) -> st
         "", "## Failure categories", "", "| category | tasks |", "|---|---|",
         *[f"| {c} | {k} |" for c, k in s["categories"].items() if k],
         "", "## Per task", "",
-        "| task | category | exit | steps | cost | patch lines | edits tests |", "|---|---|---|---|---|---|---|",
+        "| task | category | exit | steps | cost | patch lines | edits tests | harness note |",
+        "|---|---|---|---|---|---|---|---|",
         *[f"| {r['instance_id']} | {r['category']} | {r['exit_reason']} | {r['steps']} | ${r['cost_usd']:.4f} "
-          f"| {r['patch_lines']} | {'yes' if r['touches_tests'] else ''} |" for r in rows],
+          f"| {r['patch_lines']} | {'yes' if r['touches_tests'] else ''} | {r['harness_note'] or ''} |" for r in rows],
     ]
     return "\n".join(lines) + "\n"
 
