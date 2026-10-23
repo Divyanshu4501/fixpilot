@@ -14,6 +14,7 @@ Estimate download size without pulling anything:
 import json
 import shutil
 import sys
+import time
 import urllib.request
 
 import docker
@@ -46,13 +47,39 @@ def is_local(client: docker.DockerClient, image: str) -> bool:
         return False
 
 
-def ensure_image(client: docker.DockerClient, image: str) -> bool:
-    """Make sure an image is on disk. Returns True if we pulled it (so we may remove it later)."""
+def pull(client: docker.DockerClient, image: str) -> None:
+    """Pull one image, raising if the download fails.
+
+    We read the pull's progress stream ourselves, because docker-py's `images.pull()`
+    does not raise when the download breaks midway (e.g. the network drops): it ends
+    quietly, and the failure only shows up later as a confusing "No such image".
+    """
+    repo, tag = image.rsplit(":", 1)
+    for event in client.api.pull(repo, tag=tag, stream=True, decode=True):
+        if "error" in event:
+            raise RuntimeError(f"pull of {image} failed: {event['error']}")
+    if not is_local(client, image):
+        raise RuntimeError(f"pull of {image} ended but the image is not on disk")
+
+
+def ensure_image(client: docker.DockerClient, image: str, attempts: int = 3, wait_s: float = 15) -> bool:
+    """Make sure an image is on disk, retrying failed pulls.
+
+    Returns True if we pulled it (so we may remove it later). Raises after `attempts` failures.
+    Layers that finished downloading are kept by Docker, so a retry continues where it stopped.
+    """
     if is_local(client, image):
         return False
-    repo, tag = image.rsplit(":", 1)
-    client.images.pull(repo, tag=tag)
-    return True
+    for attempt in range(1, attempts + 1):
+        try:
+            pull(client, image)
+            return True
+        except Exception as e:  # network errors come from several libraries (docker, requests, urllib3)
+            print(f"  pull attempt {attempt}/{attempts} failed for {image}: {e}", flush=True)
+            if attempt == attempts:
+                raise
+            time.sleep(wait_s * attempt)
+    return True  # unreachable; keeps type checkers happy
 
 
 def remove_image(client: docker.DockerClient, image: str) -> bool:
