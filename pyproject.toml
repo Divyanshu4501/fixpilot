@@ -9,5 +9,16 @@ dependencies = [
     "docker>=7.2.0",
     "openai>=3.29.0",
     "python-dotenv>=1.2.4",
+    "statsmodels>=0.15.0",
     "swebench>=5.0.2",
 ]
+
+[dependency-groups]
+dev = [
+    "pytest>=9.1.1",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+markers = ["integration: needs Docker and SWE-bench images (run with: uv run pytest -m integration)"]
+addopts = "-m 'not integration'"
